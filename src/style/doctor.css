@@ -1,0 +1,37 @@
+/* Layout cho màn hình khám */
+.exam-grid {
+    display: grid;
+    grid-template-columns: 300px 1fr;
+    gap: 20px;
+}
+
+.avatar-lg { width: 80px; height: 80px; border-radius: 50%; margin-bottom: 10px; }
+.patient-summary { text-align: center; }
+
+/* Prescription Form */
+.prescription-row {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 10px;
+    align-items: center;
+}
+
+.btn-secondary {
+    background: var(--primary-light);
+    color: var(--primary-color);
+    border: none;
+    padding: 10px 15px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: 600;
+}
+
+.btn-delete {
+    background: #fee2e2;
+    color: #ef4444;
+    border: none;
+    width: 30px;
+    height: 30px;
+    border-radius: 5px;
+    cursor: pointer;
+}

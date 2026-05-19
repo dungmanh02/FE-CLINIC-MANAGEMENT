@@ -1,0 +1,190 @@
+/* --- 1. Reset & Global Styles --- */
+:root {
+    --primary-color: #2563eb; /* Xanh dương đậm hiện đại */
+    --primary-light: #dbeafe;
+    --teal-color: #0d9488;
+    --teal-light: #ccfbf1;
+    --bg-color: #f8fafc; /* Xanh xám nhạt cho nền */
+    --sidebar-bg: #ffffff;
+    --text-main: #1e293b;
+    --text-sub: #64748b;
+    --border-color: #e2e8f0;
+    --shadow-sm: 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24);
+    --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+    --radius-md: 12px;
+    --radius-lg: 16px;
+    --transition: all 0.3s ease;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Inter', sans-serif;
+    background-color: var(--bg-color);
+    color: var(--text-main);
+    font-size: 15px;
+    overflow-x: hidden;
+}
+
+a {
+    text-decoration: none;
+    color: inherit;
+    transition: var(--transition);
+}
+
+ul {
+    list-style: none;
+}
+
+/* --- 2. Layout --- */
+.dashboard-container {
+    display: flex;
+    min-height: 100vh;
+}
+
+/* --- 4. Main Content Area --- */
+.main-content {
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+/* --- 6. Page Content & Bento Grid --- */
+.page-content {
+    padding: 2rem;
+    flex-grow: 1;
+}
+
+.page-title {
+    font-size: 1.8rem;
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+}
+
+.page-subtitle {
+    color: var(--text-sub);
+    margin-bottom: 2rem;
+}
+
+/* --- 7. Responsive (Đơn giản hóa) --- */
+@media (max-width: 1024px) {
+    .bento-grid {
+        grid-template-columns: repeat(2, 1fr); /* Chuyển thành 2 cột */
+    }
+    .appointment-card {
+        grid-column: span 2;
+    }
+    .trend-card {
+        grid-column: span 2;
+    }
+}
+
+/* =========================================
+   CSS CHUNG CHO TRANG ĐĂNG NHẬP / ĐĂNG KÝ
+========================================= */
+
+.login-container {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, #eef4ff 0%, #ffffff 100%);
+  font-family: 'Inter', sans-serif;
+  padding: 24px;
+}
+
+.login-form {
+  background: #ffffff;
+  max-width: 520px; /* Độ rộng vừa vặn cho form nhiều trường */
+  width: 100%;
+  padding: 40px;
+  border-radius: 24px;
+  box-shadow: 0 20px 40px -10px rgba(0, 0, 0, 0.1);
+}
+
+.login-form h2 {
+  text-align: center;
+  color: #0f172a;
+  margin-bottom: 24px;
+  font-size: 1.8rem;
+  font-weight: 800;
+}
+
+.input-group {
+  margin-bottom: 16px;
+  display: flex;
+  flex-direction: column;
+}
+
+.input-group label {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: #475569;
+  margin-bottom: 8px;
+}
+
+.input-group input, 
+.input-group select {
+  padding: 12px 16px;
+  border: 1.5px solid #e2e8f0;
+  border-radius: 12px;
+  font-size: 1rem;
+  outline: none;
+  transition: all 0.2s ease;
+  font-family: 'Inter', sans-serif;
+  background-color: #f8fafc;
+}
+
+.input-group input:focus, 
+.input-group select:focus {
+  border-color: #0f6eff;
+  background-color: #ffffff;
+  box-shadow: 0 0 0 3px rgba(15, 110, 255, 0.1);
+}
+
+.btn-login {
+  width: 100%;
+  padding: 14px;
+  background: #0f6eff;
+  color: white;
+  border: none;
+  border-radius: 12px;
+  font-size: 1rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  margin-top: 12px;
+}
+
+.btn-login:hover {
+  background: #0a5ad8;
+  transform: translateY(-1px);
+}
+
+.btn-login:disabled {
+  background: #94a3b8;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.auth-footer {
+  text-align: center;
+  margin-top: 24px;
+  font-size: 0.95rem;
+  color: #64748b;
+}
+
+.auth-footer a {
+  color: #0f6eff;
+  font-weight: 600;
+  text-decoration: none;
+  margin-left: 4px;
+}
+
+.auth-footer a:hover {
+  text-decoration: underline;
+}

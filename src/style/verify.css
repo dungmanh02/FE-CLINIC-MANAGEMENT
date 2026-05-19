@@ -1,0 +1,116 @@
+/* Import font Inter giống các trang trước */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+
+:root {
+  --primary: #0f6eff;
+  --primary-dark: #0a5ad8;
+  --primary-soft: #eef4ff;
+  --text-main: #0f172a;
+  --text-sub: #475569;
+  --success: #10b981;
+  --error: #ef4444;
+  --card-bg: #ffffff;
+  /* Đổ bóng y hệt trang Login / Register */
+  --shadow-xl: 0 25px 45px -12px rgba(0, 0, 0, 0.12), 0 0 0 1px rgba(15, 110, 255, 0.06);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+.verify-wrapper {
+  font-family: 'Inter', sans-serif;
+  /* Background gradient y hệt trang Login */
+  background: linear-gradient(135deg, #eef4ff 0%, #ffffff 100%);
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  margin: 0;
+}
+
+.verify-card {
+  background: var(--card-bg);
+  max-width: 520px;
+  width: 100%;
+  padding: 56px 48px;
+  /* Bo góc 44px đặc trưng của MediPro */
+  border-radius: 44px;
+  box-shadow: var(--shadow-xl);
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.verify-icon {
+  width: 88px;
+  height: 88px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 44px;
+  margin-bottom: 28px;
+}
+
+.verify-icon.success {
+  background: rgba(16, 185, 129, 0.12);
+  color: var(--success);
+}
+
+.verify-icon.error {
+  background: rgba(239, 68, 68, 0.12);
+  color: var(--error);
+}
+
+.verify-card h1 {
+  font-size: 2rem;
+  font-weight: 800;
+  color: var(--text-main);
+  margin-bottom: 16px;
+}
+
+.verify-card p {
+  color: var(--text-sub);
+  font-size: 0.95rem;
+  line-height: 1.6;
+  margin-bottom: 36px;
+}
+
+.btn-verify {
+  background: var(--primary);
+  color: white;
+  width: 100%;
+  padding: 16px;
+  border: none;
+  /* Nút bo tròn 44px */
+  border-radius: 44px;
+  font-weight: 700;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: all 0.25s;
+  text-decoration: none;
+  display: inline-block;
+}
+
+.btn-verify:hover {
+  background: var(--primary-dark);
+  transform: translateY(-2px);
+  /* Hiệu ứng bóng đổ phát sáng khi hover */
+  box-shadow: 0 8px 20px rgba(15, 110, 255, 0.25);
+}
+
+/* Nút phụ cho trường hợp thất bại */
+.btn-verify.secondary {
+  background: transparent;
+  color: var(--primary);
+  border: 2px solid var(--primary);
+}
+
+.btn-verify.secondary:hover {
+  background: var(--primary-soft);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(15, 110, 255, 0.15);
+}
