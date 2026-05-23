@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState,useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { loginAPI } from './services/authService';
 import './style/base.css'; // Đảm bảo đúng đường dẫn CSS của bạn
@@ -62,7 +62,10 @@ const Login = () => {
       setLoading(false);
     }
   };
-
+// Tự động xóa token rác ngay khi người dùng vừa mở trang Đăng nhập
+  useEffect(() => {
+    localStorage.removeItem('token');
+  }, []);
   return (
     <div className="login-container">
       <form className="login-form" onSubmit={handleSubmit}>

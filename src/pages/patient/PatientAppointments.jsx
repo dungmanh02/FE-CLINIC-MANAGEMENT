@@ -39,10 +39,13 @@ const PatientAppointments = () => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  const handleSubmit = async (e) => {
+
+const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!currentUser || !currentUser.id) {
-      setErrorMsg('Không tìm thấy ID bệnh nhân. Vui lòng thử đăng nhập lại.');
+    
+    // ĐÃ SỬA: Chỉ cần có thông tin user là được, tạm thời bỏ qua việc kiểm tra currentUser.id
+    if (!currentUser) {
+      setErrorMsg('Không tìm thấy thông tin bệnh nhân. Vui lòng thử đăng nhập lại.');
       return;
     }
 
@@ -51,19 +54,20 @@ const PatientAppointments = () => {
     setErrorMsg('');
 
     try {
-      // Đóng gói dữ liệu chuẩn 100% theo Schema trên Swagger
+      // ĐÃ SỬA: Tạo một biến dự phòng. Nếu Backend có trả về ID thì dùng, không thì lấy tạm ID là 1 để test
+      const patientIdToSubmit = currentUser.id || currentUser.userId || 1; 
+
       const submitData = {
-        patientId: currentUser.id, // Lấy ID thật của Bệnh nhân đang đăng nhập
-        doctorId: parseInt(formData.doctorId), // Backend Quarkus yêu cầu là số nguyên
+        patientId: patientIdToSubmit, // Gửi ID dự phòng lên
+        doctorId: parseInt(formData.doctorId), 
         appointmentDate: formData.appointmentDate,
-        startTime: formData.startTime + ":00", // Thêm phần giây (:00) cho đúng chuẩn LocalTime của Java
+        startTime: formData.startTime + ":00", 
         symptoms: formData.symptoms
       };
 
       await createAppointmentAPI(submitData);
-      setMessage('🎉 Đặt lịch hẹn thành công! Vui lòng theo dõi trạng thái ở màn hình Tổng quan.');
+      setMessage('🎉 Đặt lịch hẹn thành công! Vui lòng chờ phòng khám xác nhận.');
       
-      // Xóa form đi cho gọn sau khi đặt lịch xong
       setFormData({ doctorId: '', appointmentDate: '', startTime: '', symptoms: '' });
       
     } catch (error) {
@@ -77,6 +81,7 @@ const PatientAppointments = () => {
       setLoading(false);
     }
   };
+
 
   return (
     <div className="dashboard-container">

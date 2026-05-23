@@ -13,6 +13,7 @@ import ForgotPassword from './ForgotPassword';
 import ChangePassword from './ChangePassword';
 import PatientProfile from './pages/patient/PatientProfile';
 import PatientAppointments from './pages/patient/PatientAppointments';
+import AdminCreateDoctor from './pages/admin/AdminCreateDoctor';
 
 function App() {
   return (
@@ -31,6 +32,7 @@ function App() {
         <Route path="/change-password" element={<ChangePassword />} />
         <Route path="/patient/profile" element={<PatientProfile />} />
         <Route path="/patient/appointments" element={<PatientAppointments />} />
+        <Route path="/admin/create-doctor" element={<AdminCreateDoctor />} />
       </Routes>
     </BrowserRouter>
   );
