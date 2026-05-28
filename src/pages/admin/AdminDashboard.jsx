@@ -50,29 +50,59 @@ const AdminDashboard = () => {
   const [showAddMedicineForm, setShowAddMedicineForm] = useState(false);
   const [newMedicines, setNewMedicines] = useState([{ medicineId: '', quantity: 1, dosage: '' }]);
 
+  // 🚀 ĐÃ SỬA: CHUẨN HÓA DỮ LIỆU BÁC SĨ
   const fetchDoctors = async (searchKeyword = '') => {
     setIsLoading(true);
     try {
       let response = searchKeyword.trim() !== '' ? await searchDoctorsAPI(searchKeyword) : await getAllDoctorsAPI(0);
-      const actualDoctorArray = response.data?.data?.doctors || response.data?.data?.doctorList || response.data?.data?.content || response.data?.data || [];
+      // Bắt mọi tầng dữ liệu
+      const actualDoctorArray = response.data?.data?.doctors || response.data?.data?.doctorList || response.data?.data?.content || response.data?.data || response.data || response || [];
       setDoctors(Array.isArray(actualDoctorArray) ? actualDoctorArray : []);
     } catch (error) { setDoctors([]); } finally { setIsLoading(false); }
   };
 
+
+
+//  QUÉT MẢNG DỮ LIỆU mảng phòng ban
   const fetchDepartments = async () => {
     setIsDeptLoading(true);
     try {
       const response = await getAllDepartmentsAPI(0);
-      const actualDeptArray = response.data?.data?.departments || response.data?.data?.content || response.data?.data || [];
-      setSpecialties(Array.isArray(actualDeptArray) ? actualDeptArray : []);
-    } catch (error) { setSpecialties([]); } finally { setIsDeptLoading(false); }
+      
+      // Lôi đích danh cái mảng departmentResponseList ra
+      const actualDeptArray = 
+        response.data?.data?.departmentResponseList || 
+        response.data?.departmentResponseList || 
+        response.data?.data?.departments || 
+        response.data?.data?.content || 
+        response.data?.data || 
+        [];
+      
+      const rawArray = Array.isArray(actualDeptArray) ? actualDeptArray : [];
+      
+      // Chuẩn hóa tên biến
+      const normalizedDepts = rawArray.map(dept => ({
+        ...dept,
+        id: dept.id || dept.departmentId,
+        name: dept.name || dept.departmentName || dept.department_name
+      }));
+      
+      setSpecialties(normalizedDepts);
+    } catch (error) { 
+      console.error("Lỗi lấy phòng ban:", error);
+      setSpecialties([]); 
+    } finally { 
+      setIsDeptLoading(false); 
+    }
   };
 
+  // 🚀 ĐÃ SỬA: CHUẨN HÓA DỮ LIỆU THUỐC
   const fetchDrugs = async () => {
     setIsDrugLoading(true);
     try {
       const response = await getAllDrugsAPI(0, 100);
-      const actualDrugArray = response.data?.data?.content || response.data?.data || [];
+      // Bắt mọi tầng dữ liệu
+      const actualDrugArray = response.data?.data?.content || response.data?.data || response.data || response || [];
       setDrugs(Array.isArray(actualDrugArray) ? actualDrugArray : []);
     } catch (error) { setDrugs([]); } finally { setIsDrugLoading(false); }
   };
@@ -104,18 +134,16 @@ const AdminDashboard = () => {
     if (window.confirm(`XÓA HOÀN TOÀN lịch hẹn #${id}?`)) { try { await deleteAppointmentAPI(id); alert("Đã xóa!"); setIsApptDetailModalOpen(false); setSearchApptId(''); } catch (e) { alert("Thất bại!"); } }
   };
 
-  // 🚀 CẬP NHẬT: GỌI SONG SONG 2 API ĐỂ LẤY FULL BỆNH ÁN + ĐƠN THUỐC
   const handleViewMedicalRecord = async (id) => {
     if (!id) return alert("Vui lòng nhập ID Bệnh án!");
     try {
       const [recordRes, prescriptionRes] = await Promise.all([
         getMedicalRecordDetailsAPI(id),
-        getPrescriptionsByRecordAPI(id).catch(() => ({ data: { data: [] } })) // Bắt lỗi riêng lẻ để không sập cả Modal
+        getPrescriptionsByRecordAPI(id).catch(() => ({ data: { data: [] } }))
       ]);
       const recordData = recordRes.data?.data || recordRes.data;
       const prescriptionData = prescriptionRes.data?.data || prescriptionRes.data || [];
       
-      // Gộp chung đơn thuốc vào recordDetails
       setRecordDetails({ ...recordData, prescriptionDetails: prescriptionData });
       setIsRecordDetailModalOpen(true);
     } catch (error) { alert("Không tìm thấy bệnh án!"); }
@@ -137,7 +165,6 @@ const AdminDashboard = () => {
   const handleRemoveMedicine = (index) => { const newMedicines = recordForm.medicines.filter((_, i) => i !== index); setRecordForm({ ...recordForm, medicines: newMedicines }); };
   const handleSaveMedicalRecord = async () => { try { const payload = { appointmentId: parseInt(recordForm.appointmentId), diagnosis: recordForm.diagnosis, treatmentPlan: recordForm.treatmentPlan, reexaminationDate: recordForm.reexaminationDate || null, medicines: recordForm.medicines.map(m => ({ medicineId: parseInt(m.medicineId), quantity: parseInt(m.quantity), dosage: m.dosage })) }; await createMedicalRecordAPI(payload); alert("🩺 Đã lập bệnh án thành công!"); setIsRecordModalOpen(false); setIsApptDetailModalOpen(false); } catch (e) { alert("Lập bệnh án thất bại!"); } };
 
-  // 🚀 CẬP NHẬT LẠI SAU KHI BỔ SUNG THUỐC
   const handleAddMoreMedicineRow = () => setNewMedicines([...newMedicines, { medicineId: '', quantity: 1, dosage: '' }]);
   const handleNewMedicineChange = (index, field, value) => { const updated = [...newMedicines]; updated[index][field] = value; setNewMedicines(updated); };
   const handleRemoveNewMedicine = (index) => { const updated = newMedicines.filter((_, i) => i !== index); setNewMedicines(updated); };
@@ -150,7 +177,6 @@ const AdminDashboard = () => {
       await addMedicinesToRecordAPI(recordDetails.id, payload);
       alert("✅ Đã bổ sung thuốc vào bệnh án thành công!");
       
-      // Gọi lại cả 2 API để làm mới Modal
       const [recordRes, prescriptionRes] = await Promise.all([
         getMedicalRecordDetailsAPI(recordDetails.id),
         getPrescriptionsByRecordAPI(recordDetails.id).catch(() => ({ data: { data: [] } }))
@@ -301,7 +327,7 @@ const AdminDashboard = () => {
         </div>
       )}
 
-      {/* 🚀 MODAL XEM CHI TIẾT VÀ BỔ SUNG THUỐC VÀO BỆNH ÁN LẺ */}
+      {/* MODAL XEM CHI TIẾT VÀ BỔ SUNG THUỐC VÀO BỆNH ÁN LẺ */}
       {isRecordDetailModalOpen && recordDetails && (
         <div className="modal" style={{ display: 'flex', zIndex: 15000 }}>
           <div className="modal-content" style={{ maxWidth: '600px', maxHeight: '90vh', overflowY: 'auto' }}>
@@ -330,6 +356,7 @@ const AdminDashboard = () => {
               )}
             </div>
 
+            {/* FORM KÊ THÊM THUỐC BỔ SUNG */}
             <div style={{ marginTop: '20px', borderTop: '2px solid #e2e8f0', paddingTop: '15px', textAlign: 'left' }}>
               {!showAddMedicineForm ? (
                 <button onClick={() => setShowAddMedicineForm(true)} style={{ padding: '8px 16px', backgroundColor: '#10b981', color: 'white', border: 'none', borderRadius: '6px', cursor: 'pointer', fontSize: '13px', fontWeight: 'bold', width: '100%' }}>+ Kê thêm thuốc vào Bệnh án này</button>
@@ -370,8 +397,8 @@ const AdminDashboard = () => {
       {/* MODAL LỊCH SỬ KHÁM */}
       {isHistoryModalOpen && (
         <div style={{ display: 'flex', position: 'fixed', top: 0, left: 0, width: '100%', height: '100%', backgroundColor: 'rgba(0,0,0,0.6)', justifyContent: 'center', alignItems: 'center', zIndex: 16000 }}>
-          <div style={{ backgroundColor: 'white', padding: '24px', borderRadius: '12px', width: '700px', maxHeight: '85vh', overflowY: 'auto', display: 'flex', flexDirection: 'column', gap: '15px', boxShadow: '0 10px 25px rgba(0,0,0,0.2)' }}>
-            <h3 style={{ margin: 0, color: '#0055ff', borderBottom: '2px solid #0055ff', paddingBottom: '10px' }}>📜 Sổ Sách Lịch Sử Khám Bệnh (Bệnh nhân #{searchPatientHistoryId})</h3>
+          <div style={{ backgroundColor: 'white', padding: '24px', borderRadius: '12px', width: '650px', maxHeight: '85vh', overflowY: 'auto', display: 'flex', flexDirection: 'column', gap: '15px', boxShadow: '0 10px 25px rgba(0,0,0,0.2)' }}>
+            <h3 style={{ margin: 0, color: '#2563eb', borderBottom: '2px solid #2563eb', paddingBottom: '10px' }}>📜 Lịch Sử Sổ Khám Bệnh nhân #{searchPatientHistoryId}</h3>
             <div style={{ display: 'flex', flexDirection: 'column', gap: '15px', marginTop: '10px' }}>
               {historyRecords.length > 0 ? historyRecords.map((rec) => (
                 <div key={rec.id} style={{ background: '#f8fafc', padding: '16px', borderRadius: '8px', border: '1px solid #cbd5e1', textAlign: 'left' }}>
@@ -403,6 +430,7 @@ const AdminDashboard = () => {
         </div>
       )}
 
+      {/* CHI TIẾT THUỐC */}
       {isDrugDetailModalOpen && drugDetails && (
         <div className="modal" style={{ display: 'flex', zIndex: 12000 }}>
           <div className="modal-content" style={{ maxWidth: '400px' }}>

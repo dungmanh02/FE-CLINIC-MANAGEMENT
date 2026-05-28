@@ -36,7 +36,6 @@ const AppointmentCard = ({ isLoadingAppointments, appointments, setIsModalOpen, 
               </div>
               <span className={`status-badge ${appt.status === 'PENDING' ? 'pending' : (appt.status === 'CANCELLED' ? 'cancelled' : 'confirmed')}`}>{appt.status || 'Chờ khám'}</span>
               <div style={{ display: 'flex', gap: '6px', flexWrap: 'wrap', justifyContent: 'flex-end', marginLeft: 'auto' }}>
-                <button className="btn-action" onClick={() => openRecordModal(appt.id)} style={{ background: '#8b5cf6', color: 'white', border: 'none' }}>Lập bệnh án</button>
                 <button className="btn-action secondary" onClick={() => handleViewAppointmentDetails(appt.id)} style={{ background: '#3b82f6', color: 'white', border: 'none' }}>Chi tiết</button>
                 {appt.status === 'PENDING' && <button className="btn-action" onClick={() => handleConfirmAppointment(appt.id)} style={{ background: '#10b981', color: 'white', border: 'none' }}>Xác nhận</button>}
                 {appt.status !== 'CANCELLED' && <button className="btn-action" onClick={() => handleCancelAppointment(appt.id)} style={{ background: '#f59e0b', color: 'white', border: 'none' }}>Hủy</button>}

@@ -12,9 +12,6 @@ const Sidebar = ({ handleLogout, setIsDrugModalOpen }) => {
         <Link to="/patient/dashboard" className="nav-item active">
           <span className="icon"> 📊 </span> Tổng quan
         </Link>
-        <Link to="/patient/appointments" className="nav-item">
-          <span className="icon"> 📅 </span> Đặt lịch khám
-        </Link>
         <Link to="/patient/profile" className="nav-item">
           <span className="icon"> 👤 </span> Thông tin cá nhân
         </Link>

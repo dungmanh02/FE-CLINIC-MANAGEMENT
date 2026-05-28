@@ -12,17 +12,26 @@ export const getAllAppointmentsAPI = async (page = 0, size = 10) => {
 export const getAppointmentDetailsAPI = async (id) => {
     return await api.get(`/appointments/${id}`);
 };
-//xác nhận lịch hẹn(doctor and patient)
+
 export const confirmAppointmentAPI = async (id) => {
-    return await api.patch(`/appointments/${id}/confirm`);
+    const payload = { status: "CONFIRMED" };
+    return await api.patch(`/appointments/${id}/status`, payload);
 };
 
-// hủy lịch hẹn(doctor and patient)
-export const cancelAppointmentAPI = async (id, reasonData) => {
-    // reasonData có dạng: { reason: "Lý do hủy..." }
-    return await api.patch(`/appointments/${id}/cancel`, reasonData);
+export const cancelAppointmentAPI = async (id, reasonText) => {
+    const payload = { 
+        status: "CANCELLED",
+        reason: reasonText
+    };
+    return await api.patch(`/appointments/${id}/status`, payload);
 };
+
+
 // xóa/hủy trạng thái lịch hẹn
 export const deleteAppointmentAPI = async (id) => {
     return await api.delete(`/appointments/${id}`);
+};
+// Thay đổi URL gọi sang API Users (Lấy tối đa 100 người để không bị thiếu)
+export const getPatientsByDoctorAPI = async (doctorId) => {
+    return await api.get('/users?page=0&size=100'); 
 };

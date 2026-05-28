@@ -10,7 +10,7 @@ export const getMedicalRecordDetailsAPI = async (id) => {
 };
 //hàm xem lịch sử tất cả bệnh án của bệnh nhân theo id
 export const getMedicalHistoryByPatientAPI = async (patientId) => {
-    return await api.get(`/medical-records/patient/${patientId}`);
+    return await api.get(`/medical-records?patientId=${patientId}`);
 };
 //API bổ sung thuốc vào bệnh án
 export const addMedicinesToRecordAPI = async (recordId, medicinesData) => {
