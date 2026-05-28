@@ -17,3 +17,14 @@ export const searchDoctorsAPI = async (keyword) => {
     // Truyền keyword lên URL theo chuẩn query parameter
     return await api.get(`/search?keyword=${keyword}`); 
 };
+
+
+// 5. API Lấy danh sách tất cả người dùng (Để Admin lọc ra Bệnh nhân)
+export const getAllUsersAPI = async (page = 0, size = 100) => {
+    return await api.get(`/users?page=${page}&size=${size}`); 
+};
+
+// 6. API Khóa (Xóa mềm) tài khoản người dùng
+export const softDeleteUserAPI = async (id) => {
+    return await api.delete(`/users/${id}`);
+};

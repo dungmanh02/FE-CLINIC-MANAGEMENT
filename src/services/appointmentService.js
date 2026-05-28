@@ -36,3 +36,9 @@ export const deleteAppointmentAPI = async (id) => {
 export const getPatientsByDoctorAPI = async (doctorId) => {
     return await api.get('/users?page=0&size=100'); 
 };
+
+
+// admin gọi bệnh nhân theo bác sĩ
+export const getPatientsByDoctorForAdminAPI = async (doctorId, page = 0, size = 100) => {
+    return await api.get(`/users/patients-by-doctor?doctorId=${doctorId}&page=${page}&size=${size}`);
+};

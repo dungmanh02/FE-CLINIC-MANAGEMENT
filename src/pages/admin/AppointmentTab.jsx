@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-import { getPatientsByDoctorAPI, getAllAppointmentsAPI } from '../../services/appointmentService';
+// Thay đổi import để lấy hàm mới
+import { getPatientsByDoctorForAdminAPI, getAllAppointmentsAPI } from '../../services/appointmentService';
 
 const AppointmentTab = ({
   doctors, // Nhận danh sách bác sĩ từ AdminDashboard
@@ -24,11 +25,15 @@ const AppointmentTab = ({
     setSelectedDoctor(doctor);
     setIsLoadingPatients(true);
     try {
+      // 🚀 1. Lấy ID của bác sĩ vừa click
+      const doctorId = doctor.id || doctor.userId; 
+      
+      // 🚀 2. Dùng HÀM MỚI dành riêng cho Admin, truyền ID vào
+      const response = await getPatientsByDoctorForAdminAPI(doctorId);
+      
+      // 🚀 3. Hứng dữ liệu theo đúng cấu trúc Swagger mới
+      const allUsers = response.data?.data?.users || response.data?.data?.content || response.data?.data || response.data || [];
 
-      const response = await getPatientsByDoctorAPI();
-      
-      const allUsers = response.data?.data?.content || response.data?.data?.users || response.data?.data || response.data || [];
-      
       if (Array.isArray(allUsers)) {
         const patientsList = allUsers.filter(u => u.role === 'PATIENT' || u.role === 'ROLE_PATIENT' || u.roleId === 2);
         setPatients(patientsList.length > 0 ? patientsList : allUsers);
@@ -130,39 +135,47 @@ const AppointmentTab = ({
             {isLoadingPatients ? (
               <p style={{ textAlign: 'center', padding: '20px' }}>Đang tải danh sách...</p>
             ) : (
-              <div className="table-responsive" style={{ padding: '20px' }}>
-                <table className="admin-table">
-                  <thead>
-                    <tr>
-                      <th>ID</th>
-                      <th>Họ và Tên</th>
-                      <th>Email / SĐT</th>
-                      <th>Hành động</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {patients.length > 0 ? patients.map((patient, index) => (
-                      <tr key={patient.id || patient.userId || patient.patientId || index}>
-                        <td>#{patient.id || patient.userId || patient.patientId}</td>
-                        <td><strong>{patient.name || patient.fullName || patient.username}</strong></td>
-                        <td>{patient.email || patient.phone || <span style={{ color: '#94a3b8' }}>Chưa cập nhật</span>}</td>
-                        <td>
-                          <div style={{ display: 'flex', gap: '8px' }}>
-                            <button onClick={() => handleViewAppointments(patient)} style={{ padding: '6px 12px', backgroundColor: '#10b981', color: 'white', border: 'none', borderRadius: '6px', cursor: 'pointer', fontWeight: 'bold', fontSize: '12px' }}>📅 Lịch hẹn</button>
-                            {/* Gọi hàm xem sổ bệnh án có sẵn từ AdminDashboard truyền xuống */}
-                            <button onClick={() => {
-                                setSearchPatientHistoryId(patient.id || patient.userId || patient.patientId);
-                                handleViewPatientHistory(patient.id || patient.userId || patient.patientId);
-                            }} style={{ padding: '6px 12px', backgroundColor: '#3b82f6', color: 'white', border: 'none', borderRadius: '6px', cursor: 'pointer', fontWeight: 'bold', fontSize: '12px' }}>📜 Sổ bệnh án</button>
-                          </div>
-                        </td>
-                      </tr>
-                    )) : (
-                      <tr><td colSpan="4" style={{ textAlign: 'center', padding: '20px', color: '#64748b' }}>📭 Bác sĩ này hiện chưa có bệnh nhân nào.</td></tr>
-                    )}
-                  </tbody>
-                </table>
-              </div>
+            
+        <div className="table-responsive" style={{ padding: '0 20px 20px 20px', width: '100%' }}>
+          <table className="admin-table" style={{ width: '100%', minWidth: '600px', borderCollapse: 'collapse', textAlign: 'left', marginTop: '10px' }}>
+            <thead>
+              <tr style={{ backgroundColor: '#f8fafc', borderBottom: '2px solid #e2e8f0' }}>
+                <th style={{ padding: '14px 15px', width: '10%', textAlign: 'center', color: '#475569' }}>ID</th>
+                <th style={{ padding: '14px 15px', width: '30%', color: '#475569' }}>Họ và Tên</th>
+                <th style={{ padding: '14px 15px', width: '30%', color: '#475569' }}>Email / SĐT</th>
+                <th style={{ padding: '14px 15px', width: '30%', textAlign: 'center', color: '#475569' }}>Hành động</th>
+              </tr>
+            </thead>
+            <tbody>
+              {patients.length > 0 ? patients.map((patient, index) => (
+                <tr key={patient.id || patient.userId || patient.patientId || index} style={{ borderBottom: '1px solid #f1f5f9', transition: 'background-color 0.2s' }} onMouseEnter={(e) => e.currentTarget.style.backgroundColor = '#f8fafc'} onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'transparent'}>
+                  <td style={{ padding: '16px 15px', textAlign: 'center', color: '#64748b', fontWeight: '500' }}>#{patient.id || patient.userId || patient.patientId}</td>
+                  <td style={{ padding: '16px 15px' }}>
+                    <strong style={{ color: '#0f172a', fontSize: '15px' }}>{patient.name || patient.fullName || patient.username}</strong>
+                  </td>
+                  <td style={{ padding: '16px 15px', color: '#334155' }}>
+                    {patient.email || patient.phone || <span style={{ color: '#94a3b8', fontStyle: 'italic' }}>Chưa cập nhật</span>}
+                  </td>
+                  <td style={{ padding: '16px 15px' }}>
+                    <div style={{ display: 'flex', gap: '10px', justifyContent: 'center' }}>
+                      <button onClick={() => handleViewAppointments(patient)} style={{ padding: '8px 16px', backgroundColor: '#10b981', color: 'white', border: 'none', borderRadius: '6px', cursor: 'pointer', fontWeight: 'bold', fontSize: '13px', display: 'flex', alignItems: 'center', gap: '6px', boxShadow: '0 2px 4px rgba(16, 185, 129, 0.2)' }}>
+                        📅 Lịch hẹn
+                      </button>
+                      <button onClick={() => {
+                          setSearchPatientHistoryId(patient.id || patient.userId || patient.patientId);
+                          handleViewPatientHistory(patient.id || patient.userId || patient.patientId);
+                      }} style={{ padding: '8px 16px', backgroundColor: '#3b82f6', color: 'white', border: 'none', borderRadius: '6px', cursor: 'pointer', fontWeight: 'bold', fontSize: '13px', display: 'flex', alignItems: 'center', gap: '6px', boxShadow: '0 2px 4px rgba(59, 130, 246, 0.2)' }}>
+                        📜 Sổ bệnh án
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+              )) : (
+                <tr><td colSpan="4" style={{ textAlign: 'center', padding: '40px 20px', color: '#64748b' }}>📭 Bác sĩ này hiện chưa có bệnh nhân nào.</td></tr>
+              )}
+            </tbody>
+          </table>
+        </div>
             )}
           </div>
         )}

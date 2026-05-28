@@ -11,9 +11,16 @@ const Sidebar = ({ activeTab, setActiveTab, handleLogout }) => {
           <span className="logo-text">Medi<span className="text-primary">Pro</span></span>
         </div>
         <nav className="nav-menu">
-          <div className={`nav-item ${activeTab === 'accounts' ? 'active' : ''}`} onClick={() => setActiveTab('accounts')}>
-            <span className="icon"> 👥 </span> Quản lý tài khoản
+          {/* ĐÃ TÁCH TAB: Quản lý Bác sĩ */}
+          <div className={`nav-item ${activeTab === 'doctors' ? 'active' : ''}`} onClick={() => setActiveTab('doctors')}>
+            <span className="icon"> 👨‍⚕️ </span> Quản lý tài khoản Bác sĩ
           </div>
+          
+          {/* ĐÃ TÁCH TAB: Quản lý Bệnh nhân */}
+          <div className={`nav-item ${activeTab === 'patients' ? 'active' : ''}`} onClick={() => setActiveTab('patients')}>
+            <span className="icon"> 👥 </span> Quản lý tài khoản Bệnh nhân
+          </div>
+
           <div className="nav-item" onClick={() => navigate('/admin/create-doctor')} style={{ backgroundColor: '#eff6ff', color: '#0f6eff', fontWeight: 'bold' }}>
             <span className="icon"> ➕ </span> Thêm Bác sĩ Mới
           </div>
@@ -36,4 +43,5 @@ const Sidebar = ({ activeTab, setActiveTab, handleLogout }) => {
     </aside>
   );
 };
+
 export default Sidebar;
