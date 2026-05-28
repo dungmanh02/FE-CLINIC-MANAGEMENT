@@ -55,21 +55,34 @@ const PatientDashboard = () => {
     fetchUserData();
   }, []);
   
-  const fetchAppointmentsAndDepartments = async () => {
+const fetchAppointmentsAndDepartments = async () => {
     setIsLoadingAppointments(true);
     try {
-      // 🚀 SỬA LỖI MẤT LỊCH HẸN: Tăng lên 100 để hiển thị các lịch mới nhất
+      // 1. TẢI VÀ SẮP XẾP LỊCH HẸN THEO THỜI GIAN
       const responseAppt = await getAllAppointmentsAPI(0, 100);
-      setAppointments(Array.isArray(responseAppt.data?.data?.content || responseAppt.data?.data) ? (responseAppt.data?.data?.content || responseAppt.data?.data) : []);
+      let apptList = Array.isArray(responseAppt.data?.data?.content || responseAppt.data?.data) ? (responseAppt.data?.data?.content || responseAppt.data?.data) : [];
 
+      apptList.sort((a, b) => {
+        const dateA = new Date(`${a.appointmentDate}T${a.startTime}`);
+        const dateB = new Date(`${b.appointmentDate}T${b.startTime}`);
+        return dateA - dateB; 
+      });
+      setAppointments(apptList);
+
+      // 2. TẢI PHÒNG BAN
       const responseDept = await getAllDepartmentsAPI(0);
-      setDepartments(Array.isArray(responseDept.data?.data?.departments || responseDept.data?.data?.content || responseDept.data?.data) ? (responseDept.data?.data?.departments || responseDept.data?.data?.content || responseDept.data?.data) : []);
+      const actualDeptArray = responseDept.data?.data?.departmentResponseList || responseDept.data?.departmentResponseList || responseDept.data?.data?.departments || responseDept.data?.data?.content || responseDept.data?.data || [];
+      setDepartments(Array.isArray(actualDeptArray) ? actualDeptArray : []);
 
+      // 3. TẢI DANH MỤC THUỐC
       const responseDrug = await getAllDrugsAPI(0, 100);
       setDrugs(Array.isArray(responseDrug.data?.data?.content || responseDrug.data?.data) ? (responseDrug.data?.data?.content || responseDrug.data?.data) : []);
+
+      // 🚀 4. TRẢ LẠI ĐOẠN TẢI DANH SÁCH BÁC SĨ (Bị thiếu lúc nãy)
       const responseDoc = await getAllDoctorsAPI(0);
       const docs = responseDoc.data?.data?.doctors || responseDoc.data?.data?.doctorList || responseDoc.data?.data?.content || responseDoc.data?.data || responseDoc.data || [];
       setDoctorList(Array.isArray(docs) ? docs : []);
+
     } catch (error) {
       console.error("Lỗi tải dữ liệu:", error);
     } finally {
@@ -77,6 +90,7 @@ const PatientDashboard = () => {
     }
   };
   
+
   useEffect(() => { fetchAppointmentsAndDepartments(); }, []);
   
   useEffect(() => {

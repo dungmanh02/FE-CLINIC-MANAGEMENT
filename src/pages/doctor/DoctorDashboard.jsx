@@ -329,35 +329,41 @@ const handleCancelAppointment = async (id) => {
               <div className="card-header">
                 <h2><span>👥</span> Bệnh nhân của tôi</h2>
               </div>
-              <div className="table-responsive">
-                <table className="admin-table">
+              <div className="table-responsive" style={{ padding: '0 20px 20px 20px' }}>
+                <table className="admin-table" style={{ width: '100%', minWidth: '800px', borderCollapse: 'collapse', textAlign: 'left' }}>
                   <thead>
-                    <tr>
-                      <th>ID Bệnh nhân</th>
-                      <th>Mã Bệnh nhân</th>
-                      <th>Họ và Tên</th>
-                      <th>Email</th>
-                      <th>Hành động</th>
+                    <tr style={{ backgroundColor: '#f8fafc', borderBottom: '2px solid #e2e8f0' }}>
+                      <th style={{ padding: '12px 15px', width: '10%', textAlign: 'center', color: '#475569' }}>ID</th>
+                      <th style={{ padding: '12px 15px', width: '15%', color: '#475569' }}>Mã BN</th>
+                      <th style={{ padding: '12px 15px', width: '25%', color: '#475569' }}>Họ và Tên</th>
+                      <th style={{ padding: '12px 15px', width: '25%', color: '#475569' }}>Email</th>
+                      <th style={{ padding: '12px 15px', width: '25%', textAlign: 'center', color: '#475569' }}>Hành động</th>
                     </tr>
                   </thead>
                   <tbody>
                     {patients.length > 0 ? patients.map((patient, index) => (
-                      <tr key={patient.id || patient.userId || patient.patientId || index}>
-                        <td>#{patient.id || patient.userId || patient.patientId}</td>
-                        <td>{patient.code || patient.patientCode || <span style={{ color: '#94a3b8' }}>Chưa có mã</span>}</td>
-                        <td><strong>{patient.name || patient.fullName || patient.patientName || patient.username}</strong></td>
-                        <td>{patient.email || <span style={{ color: '#94a3b8' }}>Chưa cập nhật</span>}</td>
-                        <td>
-                          <div style={{ display: 'flex', gap: '8px' }}>
+                      <tr key={patient.id || patient.userId || patient.patientId || index} style={{ borderBottom: '1px solid #f1f5f9', transition: 'background-color 0.2s' }} onMouseEnter={(e) => e.currentTarget.style.backgroundColor = '#f8fafc'} onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'transparent'}>
+                        <td style={{ padding: '16px 15px', textAlign: 'center', color: '#64748b', fontWeight: '500' }}>#{patient.id || patient.userId || patient.patientId}</td>
+                        <td style={{ padding: '16px 15px', color: '#334155' }}>
+                          {patient.code || patient.patientCode || <span style={{ color: '#94a3b8', fontStyle: 'italic' }}>Chưa có mã</span>}
+                        </td>
+                        <td style={{ padding: '16px 15px' }}>
+                          <strong style={{ color: '#0f172a', fontSize: '15px' }}>{patient.name || patient.fullName || patient.patientName || patient.username}</strong>
+                        </td>
+                        <td style={{ padding: '16px 15px', color: '#334155' }}>
+                          {patient.email || <span style={{ color: '#94a3b8', fontStyle: 'italic' }}>Chưa cập nhật</span>}
+                        </td>
+                        <td style={{ padding: '16px 15px' }}>
+                          <div style={{ display: 'flex', gap: '10px', justifyContent: 'center' }}>
                             <button 
                               onClick={() => openPatientAppointmentsModal(patient)}
-                              style={{ padding: '6px 12px', backgroundColor: '#10b981', color: 'white', border: 'none', borderRadius: '6px', cursor: 'pointer', fontWeight: 'bold', fontSize: '12px' }}
+                              style={{ padding: '8px 16px', backgroundColor: '#10b981', color: 'white', border: 'none', borderRadius: '6px', cursor: 'pointer', fontWeight: 'bold', fontSize: '13px', display: 'flex', alignItems: 'center', gap: '6px', boxShadow: '0 2px 4px rgba(16, 185, 129, 0.2)' }}
                             >
                               🏥 Lịch hẹn & Khám
                             </button>
                             <button 
                               onClick={() => handleViewPatientHistory(patient.id || patient.userId || patient.patientId)}
-                              style={{ padding: '6px 12px', backgroundColor: '#3b82f6', color: 'white', border: 'none', borderRadius: '6px', cursor: 'pointer', fontWeight: 'bold', fontSize: '12px' }}
+                              style={{ padding: '8px 16px', backgroundColor: '#3b82f6', color: 'white', border: 'none', borderRadius: '6px', cursor: 'pointer', fontWeight: 'bold', fontSize: '13px', display: 'flex', alignItems: 'center', gap: '6px', boxShadow: '0 2px 4px rgba(59, 130, 246, 0.2)' }}
                             >
                               📜 Sổ bệnh án
                             </button>
@@ -366,7 +372,7 @@ const handleCancelAppointment = async (id) => {
                       </tr>
                     )) : (
                       <tr>
-                        <td colSpan="5" style={{ textAlign: 'center', padding: '20px', color: '#64748b' }}>
+                        <td colSpan="5" style={{ textAlign: 'center', padding: '40px 20px', color: '#64748b' }}>
                           📭 Hiện chưa có bệnh nhân nào trong danh sách của bạn.
                         </td>
                       </tr>
@@ -640,7 +646,7 @@ const handleCancelAppointment = async (id) => {
                   }
                 </tbody>
               </table>
-             {appointments.filter(a => a.status === 'CONFIRMED' && (a.patientName === selectedPatientForAppt.fullName || a.patientName === selectedPatientForAppt.name || a.patientName === selectedPatientForAppt.username)).length === 0 && (
+              {appointments.filter(a => (a.patientId === selectedPatientForAppt.id || a.patientId === selectedPatientForAppt.userId || a.patientId === selectedPatientForAppt.patientId) && a.status === 'CONFIRMED').length === 0 && (
                 <p style={{ textAlign: 'center', marginTop: '20px', color: '#64748b' }}>Bệnh nhân này hiện không có lịch hẹn nào đang ở trạng thái <strong>Đã xác nhận</strong> để khám.</p>
               )}
             </div>

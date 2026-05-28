@@ -29,8 +29,9 @@ export const cancelAppointmentAPI = async (id, reasonText) => {
 
 // xóa/hủy trạng thái lịch hẹn
 export const deleteAppointmentAPI = async (id) => {
-    return await api.delete(`/appointments/${id}`);
+    return await api.patch(`/appointments/${id}/status/delete`);
 };
+
 // Thay đổi URL gọi sang API Users (Lấy tối đa 100 người để không bị thiếu)
 export const getPatientsByDoctorAPI = async (doctorId) => {
     return await api.get('/users?page=0&size=100'); 

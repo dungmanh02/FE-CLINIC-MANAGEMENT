@@ -151,6 +151,7 @@ const AdminDashboard = () => {
 
   const handleViewPatientHistory = async (patientId) => {
     if (!patientId) return alert("Vui lòng nhập mã ID Bệnh nhân!");
+    setSearchPatientHistoryId(patientId);
     try {
       const response = await getMedicalHistoryByPatientAPI(patientId);
       const dataArr = response.data?.data || response.data || [];
@@ -218,6 +219,7 @@ const AdminDashboard = () => {
             {activeTab === 'accounts' && <DoctorTab doctors={doctors} isLoading={isLoading} openModal={openModal} handleDelete={handleDelete} />}
             {activeTab === 'appointments' && (
               <AppointmentTab 
+                doctors={doctors}
                 openModal={openModal} searchApptId={searchApptId} setSearchApptId={setSearchApptId} handleViewAppointmentDetails={handleViewAppointmentDetails} searchRecordId={searchRecordId} setSearchRecordId={setSearchRecordId} handleViewMedicalRecord={handleViewMedicalRecord} searchPatientHistoryId={searchPatientHistoryId} setSearchPatientHistoryId={setSearchPatientHistoryId} handleViewPatientHistory={handleViewPatientHistory}
               />
             )}
