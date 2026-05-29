@@ -15,14 +15,13 @@ const DoctorTab = ({ doctors, isLoading, openModal, handleDelete }) => {
         ) : (
           <table className="data-table">
             <thead>
-              <tr><th>ID</th><th>Họ tên</th><th>Username</th><th>Email</th><th>Chuyên khoa</th><th>Thao tác</th></tr>
+              <tr><th>ID</th><th>Họ tên</th><th>Email</th><th>Chuyên khoa</th><th>Thao tác</th></tr>
             </thead>
             <tbody>
               {doctors.map(doc => (
                 <tr key={doc.id || doc.userId}>
                   <td>{doc.id || doc.userId}</td>
                   <td>{doc.fullName}</td>
-                  <td>{doc.username}</td>
                   <td>{doc.email}</td>
                   <td><span className="badge-specialty">{doc.specialization}</span></td>
                   <td className="action-icons">
