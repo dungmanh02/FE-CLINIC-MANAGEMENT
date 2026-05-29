@@ -31,7 +31,10 @@ const ForgotPassword = () => {
       setLoading(false);
     }
   };
-
+// Tự động xóa token rác ngay khi người dùng vừa mở trang Đăng nhập
+  useEffect(() => {
+    localStorage.removeItem('token');
+  }, []);
   return (
     <div className="login-container">
       <form className="login-form" onSubmit={handleSubmit}>

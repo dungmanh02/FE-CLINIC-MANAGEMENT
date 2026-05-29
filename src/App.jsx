@@ -4,7 +4,6 @@ import Index from './Index';
 import Login from './Login';
 import Register from './Register';
 import DoctorDashboard from './pages/doctor/DoctorDashboard';
-import DoctorAppointments from './pages/doctor/DoctorAppointments';
 import DoctorExam from './pages/doctor/DoctorExam';
 import PatientDashboard from './pages/patient/PatientDashboard';
 import AdminDashboard from './pages/admin/AdminDashboard';
@@ -12,7 +11,7 @@ import VerifyAccount from './VerifyAccount';
 import ForgotPassword from './ForgotPassword';
 import ChangePassword from './ChangePassword';
 import PatientProfile from './pages/patient/PatientProfile';
-import PatientAppointments from './pages/patient/PatientAppointments';
+import AdminCreateDoctor from './pages/admin/AdminCreateDoctor';
 
 function App() {
   return (
@@ -22,7 +21,6 @@ function App() {
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
         <Route path="/doctor/dashboard" element={<DoctorDashboard />} />
-        <Route path="/doctor/appointments" element={<DoctorAppointments />} />
         <Route path="/doctor/exam" element={<DoctorExam />} />
         <Route path="/patient/dashboard" element={<PatientDashboard />} />
         <Route path="/admin/dashboard" element={<AdminDashboard />} />
@@ -30,7 +28,7 @@ function App() {
         <Route path="/forgot-password" element={<ForgotPassword />} />
         <Route path="/change-password" element={<ChangePassword />} />
         <Route path="/patient/profile" element={<PatientProfile />} />
-        <Route path="/patient/appointments" element={<PatientAppointments />} />
+        <Route path="/admin/create-doctor" element={<AdminCreateDoctor />} />
       </Routes>
     </BrowserRouter>
   );

@@ -10,12 +10,17 @@ const Register = () => {
   const [formData, setFormData] = useState({
     username: '',
     password: '',
-    fullName: '', // Chữ N viết hoa theo đúng chuẩn Java DTO
+    fullName: '', 
     phone: '',
     email: '',
-    gender: 'MALE', // Giá trị mặc định (MALE, FEMALE, OTHER)
+    gender: 'MALE', 
     dateOfBirth: ''
   });
+
+  // 🚀 THÊM STATE CHO XÁC NHẬN MẬT KHẨU VÀ CON MẮT
+  const [confirmPassword, setConfirmPassword] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
   const [errorMsg, setErrorMsg] = useState('');
   const [loading, setLoading] = useState(false);
@@ -29,34 +34,38 @@ const Register = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setErrorMsg('');
-    setLoading(true);
 
+    // 🚀 BẮT LỖI NGAY: Nếu 2 ô mật khẩu không giống nhau thì không cho gửi đi
+    if (formData.password !== confirmPassword) {
+      setErrorMsg('Mật khẩu và Xác nhận mật khẩu không khớp nhau!');
+      return;
+    }
+
+    setLoading(true);
     try {
-      // Chuẩn bị dữ liệu gửi đi (loại bỏ dateOfBirth nếu người dùng không chọn để tránh lỗi định dạng)
+      // Chuẩn bị dữ liệu gửi đi (loại bỏ dateOfBirth nếu người dùng không chọn)
       const submitData = { ...formData };
       if (!submitData.dateOfBirth) {
         delete submitData.dateOfBirth;
       }
-
+      
       // 1. Gọi API đăng ký
       await registerAPI(submitData);
       
       // 2. Nếu thành công, thông báo nhắc check mail và điều hướng THẲNG về trang Đăng nhập
       alert('Đăng ký tài khoản thành công! Vui lòng kiểm tra hộp thư email để xác thực tài khoản trước khi đăng nhập.');
-      navigate('/login'); 
+      navigate('/login');
       
     } catch (error) {
       console.error("Registration Error:", error);
       
-      // Bắt lỗi chi tiết từ Quarkus trả về (Ví dụ: Password yếu, Username trùng,...)
+      // Bắt lỗi chi tiết từ Quarkus trả về
       if (error.response && error.response.data) {
         const violations = error.response.data.violations;
         
-        // Trường hợp 1: Nếu Backend trả về mảng lỗi Validation (ví dụ lỗi mật khẩu yếu, sai định dạng...)
         if (violations && violations.length > 0) {
-          setErrorMsg(violations[0].message); // Lấy câu thông báo lỗi cụ thể hiện lên màn hình
+          setErrorMsg(violations[0].message); 
         } else {
-          // Trường hợp 2: Bắt các lỗi custom khác từ Backend (ví dụ trùng tài khoản, trùng email)
           const beMessage = error.response.data.message || error.response.data.details || 'Đăng ký thất bại. Vui lòng kiểm tra lại thông tin.';
           setErrorMsg(beMessage);
         }
@@ -72,6 +81,7 @@ const Register = () => {
     <div className="login-container">
       <form className="login-form" onSubmit={handleSubmit}>
         <h2>Tạo Tài Khoản MediPro</h2>
+        
         {errorMsg && (
           <p className="error-text" style={{ color: 'red', textAlign: 'center', marginBottom: '15px', fontSize: '0.9rem', padding: '10px', background: '#fee2e2', borderRadius: '8px' }}>
             {errorMsg}
@@ -80,26 +90,26 @@ const Register = () => {
 
         <div className="input-group">
           <label>Họ và tên</label>
-          <input 
-            type="text" 
-            name="fullName" 
+          <input
+            type="text"
+            name="fullName"
             placeholder="Ví dụ: Nguyễn Chí Minh"
-            value={formData.fullName} 
-            onChange={handleChange} 
-            required 
+            value={formData.fullName}
+            onChange={handleChange}
+            required
             maxLength={150}
           />
         </div>
 
         <div className="input-group">
           <label>Tên đăng nhập</label>
-          <input 
-            type="text" 
-            name="username" 
+          <input
+            type="text"
+            name="username"
             placeholder="Tối thiểu 4 ký tự"
-            value={formData.username} 
-            onChange={handleChange} 
-            required 
+            value={formData.username}
+            onChange={handleChange}
+            required
             minLength={4}
             maxLength={50}
           />
@@ -107,38 +117,37 @@ const Register = () => {
 
         <div className="input-group">
           <label>Email</label>
-          <input 
-            type="email" 
-            name="email" 
+          <input
+            type="email"
+            name="email"
             placeholder="example@gmail.com"
-            value={formData.email} 
-            onChange={handleChange} 
-            required 
+            value={formData.email}
+            onChange={handleChange}
+            required
             maxLength={100}
           />
         </div>
 
-        {/* Nhóm Số điện thoại và Ngày sinh trên cùng 1 hàng */}
         <div style={{ display: 'flex', gap: '15px', marginBottom: '15px' }}>
           <div className="input-group" style={{ flex: 1, marginBottom: 0 }}>
             <label>Số điện thoại</label>
-            <input 
-              type="tel" 
-              name="phone" 
+            <input
+              type="tel"
+              name="phone"
               placeholder="0990012345"
-              value={formData.phone} 
-              onChange={handleChange} 
+              value={formData.phone}
+              onChange={handleChange}
               maxLength={10}
             />
           </div>
-
+          
           <div className="input-group" style={{ flex: 1, marginBottom: 0 }}>
             <label>Ngày sinh</label>
-            <input 
-              type="date" 
-              name="dateOfBirth" 
-              value={formData.dateOfBirth} 
-              onChange={handleChange} 
+            <input
+              type="date"
+              name="dateOfBirth"
+              value={formData.dateOfBirth}
+              onChange={handleChange}
               style={{ width: '100%', padding: '12px 16px', borderRadius: '40px', border: '1px solid #e2e8f0', fontFamily: 'Inter' }}
             />
           </div>
@@ -159,23 +168,59 @@ const Register = () => {
           </select>
         </div>
 
+        {/* 🚀 CẬP NHẬT: Mật khẩu có mắt xem */}
         <div className="input-group">
           <label>Mật khẩu</label>
-          <input 
-            type="password" 
-            name="password" 
-            placeholder="Gồm chữ hoa, thường, số & ký tự đặc biệt"
-            value={formData.password} 
-            onChange={handleChange} 
-            required 
-            minLength={8}
-          />
+          <div style={{ position: 'relative', display: 'flex', alignItems: 'center' }}>
+            <input
+              type={showPassword ? "text" : "password"}
+              name="password"
+              placeholder="Gồm chữ hoa, thường, số & ký tự đặc biệt"
+              value={formData.password}
+              onChange={handleChange}
+              required
+              minLength={8}
+              style={{ width: '100%', paddingRight: '40px', boxSizing: 'border-box' }}
+            />
+            <button
+              type="button"
+              onClick={() => setShowPassword(!showPassword)}
+              style={{ position: 'absolute', right: '10px', background: 'transparent', border: 'none', cursor: 'pointer', fontSize: '18px', padding: '0', outline: 'none', color: '#64748b' }}
+              title={showPassword ? "Ẩn mật khẩu" : "Hiện mật khẩu"}
+            >
+              {showPassword ? '👁️' : '🙈'}
+            </button>
+          </div>
+        </div>
+
+        {/* 🚀 THÊM MỚI: Ô Xác nhận mật khẩu có mắt xem */}
+        <div className="input-group">
+          <label>Xác nhận mật khẩu</label>
+          <div style={{ position: 'relative', display: 'flex', alignItems: 'center' }}>
+            <input
+              type={showConfirmPassword ? "text" : "password"}
+              placeholder="Nhập lại mật khẩu"
+              value={confirmPassword}
+              onChange={(e) => setConfirmPassword(e.target.value)}
+              required
+              minLength={8}
+              style={{ width: '100%', paddingRight: '40px', boxSizing: 'border-box' }}
+            />
+            <button
+              type="button"
+              onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+              style={{ position: 'absolute', right: '10px', background: 'transparent', border: 'none', cursor: 'pointer', fontSize: '18px', padding: '0', outline: 'none', color: '#64748b' }}
+              title={showConfirmPassword ? "Ẩn mật khẩu" : "Hiện mật khẩu"}
+            >
+              {showConfirmPassword ? '👁️' : '🙈'}
+            </button>
+          </div>
         </div>
 
         <button type="submit" className="btn-login" disabled={loading} style={{ marginTop: '10px' }}>
           {loading ? 'Đang tạo tài khoản...' : 'Đăng Ký Ngay'}
         </button>
-
+        
         <p className="auth-footer">
           Đã có tài khoản? <Link to="/login">Đăng nhập</Link>
         </p>
